@@ -65,6 +65,7 @@ const [selectedAnswers, setSelectedAnswers] = useState(Array(QUESTIONS.length).f
 
 // Kullanıcının elde ettiği puanı takip etmek için state.
 const [score, setScore] = useState(0);
+const [finished, setFinished] = useState(false);
 
   // Cevabın işlenmesi ve sonraki sorunun gösterilmesi
 const handleAnswer = (answerIndex) => {
@@ -95,53 +96,63 @@ const handleAnswer = (answerIndex) => {
       // Tüm soruları yanıtladıktan sonra sonuçları göster
       // Sonuçları bir uyarı kutusuyla göster
       alert(`Sınav Bitti! Puanınız: ${(score / questions.length) * 100}%`);
+      setFinished(true);
     }
   }, 1000); // 1 saniye sonra bir sonraki soruya geçiş
 };
 
 
-  return (
-    <div className="max-w-lg mx-auto p-8 border rounded-lg shadow-lg">
-      <h2 className="text-2xl font-bold mb-4">
-        {questions[currentQuestion].question}
-      </h2>
-      <ul>
-        {questions[currentQuestion].answers.map((answer, index) => (
-          <li
-            key={index}
-            onClick={() => handleAnswer(index)}
-            className={`py-2 px-4 mb-2 rounded-md cursor-pointer ${
-              selectedAnswers[currentQuestion] === index
-                ? index === questions[currentQuestion].correct
-                  ? "bg-green-400 text-white"
-                  : "bg-red-400 text-white"
-                : "bg-gray-200"
-            }`}
-          >
-            {answer}
-          </li>
-        ))}
-      </ul>
-      <div className="mt-4">
-        {currentQuestion > 0 && (
-          <button
-            onClick={() => setCurrentQuestion(currentQuestion - 1)}
-            className="py-2 px-4 mr-2 bg-blue-500 text-white rounded-md cursor-pointer"
-          >
-            Geri
-          </button>
-        )}
-        {currentQuestion < questions.length - 1 && (
-          <button
-            onClick={() => setCurrentQuestion(currentQuestion + 1)}
-            className="py-2 px-4 bg-blue-500 text-white rounded-md cursor-pointer"
-          >
-            İleri
-          </button>
-        )}
-      </div>
+return (
+  <div className="max-w-lg mx-auto p-8 border rounded-lg shadow-lg">
+    <h2 className="text-2xl font-bold mb-4">
+      {questions[currentQuestion].question}
+    </h2>
+    <ul>
+      {questions[currentQuestion].answers.map((answer, index) => (
+        <li
+          key={index}
+          onClick={() => handleAnswer(index)}
+          className={`py-2 px-4 mb-2 rounded-md cursor-pointer ${
+            selectedAnswers[currentQuestion] === index
+              ? index === questions[currentQuestion].correct
+                ? "bg-green-400 text-white"
+                : "bg-red-400 text-white"
+              : "bg-gray-200"
+          }`}
+        >
+          {answer}
+        </li>
+      ))}
+    </ul>
+    <div className="mt-4">
+      {/* Test bitmediyse ve geri gidilecek bir önceki soru varsa geri butonunu göster */}
+      {currentQuestion > 0 && !finished && (
+        <button
+          onClick={() => setCurrentQuestion(currentQuestion - 1)}
+          className="py-2 px-4 mr-2 bg-blue-500 text-white rounded-md cursor-pointer"
+        >
+          Geri
+        </button>
+      )}
+      {/* Test bitmediyse ve ileri gidilecek bir sonraki soru varsa ileri butonunu göster */}
+      {currentQuestion < questions.length - 1 && !finished && (
+        <button
+          onClick={() => setCurrentQuestion(currentQuestion + 1)}
+          className="py-2 px-4 bg-blue-500 text-white rounded-md cursor-pointer"
+        >
+          İleri
+        </button>
+      )}
     </div>
-  );
+    {/* Test bitmişse sonucu göster */}
+    {finished && (
+      <div className="mt-4">
+        <h2 className="text-2xl font-bold">Sınav Bitti!</h2>
+        <p className="text-lg">Puanınız: {(score / questions.length) * 100}%</p>
+      </div>
+    )}
+  </div>
+);
 };
 
 export default App;
